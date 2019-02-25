@@ -1,0 +1,8 @@
+ServiceName: 'ping'
+InterfaceName: 'items'
+Description: 'ping'
+APIDoc: ''
+Interfaces: 'search,pagination'
+RequiredScopes: ''
+AdditionalParameters:
+Method: ''

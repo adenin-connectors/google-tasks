@@ -1,0 +1,29 @@
+ConnectorTitle: GoogleTasks
+AccessCodeServiceEndpoint: https://accounts.google.com/o/oauth2/v2/auth
+AccessTokenServiceEndpoint: https://accounts.google.com/o/oauth2/token
+UserName: hide
+UserPassword: hide
+ClientId: required
+ClientSecret: required
+AccessCodeServiceUrl: hide
+AccessTokenServiceUrl: hide
+Personalized: !!bool true
+ApiKey: hide
+ServiceUrl: hide
+ServiceUrlHint: ''
+XML2JSON: hide
+ImpersonateOAuth: required
+Interface: hide
+Custom1: hide
+Custom1Label: Custom Field 1
+Custom1Hint: ''
+Custom2: hide
+Custom2Label: Custom Field 2
+Custom3: hide
+Custom2Hint: ''
+Custom3Label: Custom Field 3
+Custom3Hint: ''
+Scopes:
+- ScopeName: https://www.googleapis.com/auth/tasks
+  ScopeDescription: Access Google Tasks.
+  IsDefault: false
