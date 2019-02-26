@@ -1,7 +1,6 @@
 'use strict';
 
-const logger = require('@adenin/cf-logger');
-const handleError = require('@adenin/cf-activity').handleError;
+const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
@@ -9,6 +8,10 @@ module.exports = async (activity) => {
     api.initialize(activity);
 
     const response = await api.getTodaysTasks();
+
+    if (!cfActivity.isResponseOk(activity, response)) {
+      return;
+    }
 
     let tasks = response.body.items;
 
@@ -39,6 +42,7 @@ module.exports = async (activity) => {
     activity.Response.Data = taskStatus;
 
   } catch (error) {
-    handleError(error, activity);
+    
+    cfActivity.handleError(error, activity);
   }
 };

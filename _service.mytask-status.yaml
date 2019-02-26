@@ -1,6 +1,6 @@
 ServiceName: 'mytask-status'
-InterfaceName: 'items'
-Description: 'mytask-status'
+InterfaceName: 'status'
+Description: 'My Google Tasks Status'
 APIDoc: ''
 Interfaces: 'search,pagination'
 RequiredScopes: ''
