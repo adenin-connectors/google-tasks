@@ -42,7 +42,7 @@ module.exports = async (activity) => {
     activity.Response.Data = taskStatus;
 
   } catch (error) {
-    
+
     cfActivity.handleError(error, activity);
   }
 };
