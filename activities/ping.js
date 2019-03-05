@@ -1,18 +1,18 @@
 'use strict';
 
-const logger = require('@adenin/cf-logger');
-const utils = require('./common/utils');
+const cfActivity = require('@adenin/cf-activity');
+const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    const message = 'This is an empty activity';
-
-    logger.info(message);
+    api.initialize(activity);
+    const response = await api('/tasks/v1/users/@me/lists');
 
     activity.Response.Data = {
-      message: message
+      success: response && response.statusCode === 200
     };
   } catch (error) {
-    utils.handleError(error, activity);
+    cfActivity.handleError(activity, error);
+    activity.Response.Data.success = false;
   }
 };

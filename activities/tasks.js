@@ -14,11 +14,9 @@ module.exports = async function (activity) {
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
     }
-    // convert response to items[]
+    
     activity.Response.Data = api.convertTasks(response);
-
   } catch (error) {
-
-    cfActivity.handleError(error, activity);
+    cfActivity.handleError(activity, error);
   }
 };

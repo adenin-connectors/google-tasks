@@ -40,12 +40,15 @@ function api(path, opts) {
     throw err;
   });
 }
-// convert response from /issues endpoint to 
+//**maps response data to items */
 api.convertTasks = function (response) {
   let items = [];
-  let tasks = response.body.items;
+  let tasks = [];
 
-  // iterate through each issue and extract id, title, etc. into a new array
+  if (response.body.items != null) {
+    tasks = response.body.items;
+  }
+
   for (let i = 0; i < tasks.length; i++) {
     let raw = tasks[i];
     let item = { id: raw.id, title: raw.title, description: raw.notes, link: raw.selfLink, raw: raw };
@@ -53,7 +56,7 @@ api.convertTasks = function (response) {
   }
 
   return { items: items };
-}
+};
 const helpers = [
   'get',
   'post',
@@ -70,7 +73,7 @@ api.stream = (url, opts) => apigot(url, Object.assign({}, opts, {
 
 api.initialize = function (activity) {
   _activity = activity;
-}
+};
 
 for (const x of helpers) {
   const method = x.toUpperCase();
@@ -80,9 +83,23 @@ for (const x of helpers) {
 
 /**returns all tasks due today until midnight*/
 api.getTodaysTasks = function () {
-  let path = `/tasks/v1/lists/@default/tasks`;
+  let now = new Date(new Date().toUTCString());
+  let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 0);
 
-  return api(path);
+  let timeMax = ISODateString(midnight);
+
+  return api(`/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`);
+};
+
+/**formats string to match google api requirements*/
+function ISODateString(d) {
+  function pad(n) { return n < 10 ? '0' + n : n }
+  return d.getUTCFullYear() + '-'
+    + pad(d.getUTCMonth() + 1) + '-'
+    + pad(d.getUTCDate()) + 'T'
+    + pad(d.getUTCHours()) + ':'
+    + pad(d.getUTCMinutes()) + ':'
+    + pad(d.getUTCSeconds()) + 'Z';
 }
 
 module.exports = api;

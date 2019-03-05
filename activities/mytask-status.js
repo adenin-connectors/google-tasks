@@ -12,8 +12,10 @@ module.exports = async (activity) => {
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
     }
-
-    let tasks = response.body.items;
+    let tasks = [];
+    if (response.body.items != null) {
+      tasks = response.body.items;
+    }
 
     let taskStatus = {
       title: 'Active Tasks',
@@ -43,6 +45,6 @@ module.exports = async (activity) => {
 
   } catch (error) {
 
-    cfActivity.handleError(error, activity);
+    cfActivity.handleError(activity, error);
   }
 };
