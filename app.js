@@ -14,53 +14,53 @@ const PORT = 4000;
 let index = require('./index');
 
 router
-    .post('/:activity', async (ctx) => {
-        if (process.env.NODE_ENV === 'development') {
-            logger.debug('Decaching...');
+  .post('/:activity', async (ctx) => {
+    if (process.env.NODE_ENV === 'development') {
+      logger.debug('Decaching...');
 
-            decache('./index');
-            index = require('./index');
-        }
+      decache('./index');
+      index = require('./index');
+    }
 
-        await index.activities(ctx);
-    })
-    .all('/:activity', async (ctx) => {
-        const err = new Error('Method not allowed');
-        err.status = 405;
+    await index.activities(ctx);
+  })
+  .all('/:activity', async (ctx) => {
+    const err = new Error('Method not allowed');
+    err.status = 405;
 
-        ctx.app.emit('error', err, ctx);
-    })
-    .all('/', async (ctx) => {
-        const err = new Error('Not found');
-        err.status = 404;
+    ctx.app.emit('error', err, ctx);
+  })
+  .all('/', async (ctx) => {
+    const err = new Error('Not found');
+    err.status = 404;
 
-        ctx.app.emit('error', err, ctx);
-    });
+    ctx.app.emit('error', err, ctx);
+  });
 
 app
-    .use(async (ctx, next) => {
-        try {
-            await next();
-        } catch (err) {
-            ctx.app.emit('error', err, ctx);
-        }
-    })
-    .use(bodyParser())
-    .use(router.routes())
-    .use(router.allowedMethods())
-    .on('error', (err, ctx) => {
-        logger.error(err);
+  .use(async (ctx, next) => {
+    try {
+      await next();
+    } catch (err) {
+      ctx.app.emit('error', err, ctx);
+    }
+  })
+  .use(bodyParser())
+  .use(router.routes())
+  .use(router.allowedMethods())
+  .on('error', (err, ctx) => {
+    logger.error(err);
 
-        ctx.status = err.status || 500;
-        ctx.body = {
-            Response: {
-                ErrorCode: err.status || 500,
-                Data: {
-                    ErrorText: err.message
-                }
-            }
-        };
-    })
-    .listen(PORT);
+    ctx.status = err.status || 500;
+    ctx.body = {
+      Response: {
+        ErrorCode: err.status || 500,
+        Data: {
+          ErrorText: err.message
+        }
+      }
+    };
+  })
+  .listen(PORT);
 
 logger.info('Server running on port ' + PORT);

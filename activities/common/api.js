@@ -2,6 +2,7 @@
 const got = require('got');
 const isPlainObj = require('is-plain-obj');
 const HttpAgent = require('agentkeepalive');
+const cfActivity = require('@adenin/cf-activity');
 const HttpsAgent = HttpAgent.HttpsAgent;
 
 let _activity = null;
@@ -83,10 +84,8 @@ for (const x of helpers) {
 
 /**returns all tasks due today until midnight*/
 api.getTodaysTasks = function () {
-  let now = new Date(new Date().toUTCString());
-  let midnight = new Date(now.getFullYear(), now.getMonth(), now.getDate(), 23, 59, 59, 0);
-
-  let timeMax = ISODateString(midnight);
+  var dateRange = cfActivity.dateRange(_activity, "today");
+  let timeMax = ISODateString(new Date(dateRange.endDate));
 
   return api(`/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`);
 };
