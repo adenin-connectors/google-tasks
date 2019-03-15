@@ -1,2 +1,9 @@
+ServiceName: 'tasks'
 InterfaceName: items
 Description: List of tasks
+APIDoc: ''
+Interfaces: 'search,pagination'
+RequiredScopes: ''
+AdditionalParameters:
+Method: ''
+

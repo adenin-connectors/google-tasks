@@ -83,11 +83,15 @@ for (const x of helpers) {
 }
 
 /**returns all tasks due today until midnight*/
-api.getTodaysTasks = function () {
+api.getTodaysTasks = function (pagination) {
   var dateRange = cfActivity.dateRange(_activity, "today");
   let timeMax = ISODateString(new Date(dateRange.endDate));
 
-  return api(`/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`);
+  let path = `/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`;
+  if (pagination) {
+    path += `&maxResults=${pagination.pageSize}${pagination.nextpage == null ? '' : '&pageToken=' + pagination.nextpage}`;
+  }
+  return api(path);
 };
 
 /**formats string to match google api requirements*/

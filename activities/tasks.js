@@ -8,14 +8,17 @@ module.exports = async function (activity) {
 
   try {
     api.initialize(activity);
-
-    const response = await api.getTodaysTasks();
+    let pagination = cfActivity.pagination(activity);
+    const response = await api.getTodaysTasks(pagination);
 
     if (!cfActivity.isResponseOk(activity, response)) {
       return;
     }
     
     activity.Response.Data = api.convertTasks(response);
+    if(response.body.nextPageToken){
+      activity.Response.Data._nextpage = response.body.nextPageToken;
+    }
   } catch (error) {
     cfActivity.handleError(activity, error);
   }
