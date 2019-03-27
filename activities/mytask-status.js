@@ -1,26 +1,21 @@
 'use strict';
-
-const cfActivity = require('@adenin/cf-activity');
 const api = require('./common/api');
 
 module.exports = async (activity) => {
   try {
-    api.initialize(activity);
-
     const response = await api.getTodaysTasks();
 
-    if (!cfActivity.isResponseOk(activity, response)) {
-      return;
-    }
+    if (Activity.isErrorResponse(response)) return;
+
     let tasks = [];
     if (response.body.items != null) {
       tasks = response.body.items;
     }
 
     let taskStatus = {
-      title: 'Active Tasks',
-      url: 'https://mail.google.com/tasks/canvas',
-      urlLabel: 'All tasks',
+      title: T('Active Tasks'),
+      link: 'https://mail.google.com/tasks/canvas',
+      linkLabel: T('All Tasks')
     };
 
     let taskCount = tasks.length;
@@ -28,7 +23,7 @@ module.exports = async (activity) => {
     if (taskCount != 0) {
       taskStatus = {
         ...taskStatus,
-        description: `You have ${taskCount > 1 ? taskCount + " tasks" : taskCount + " task"} today.`,
+        description: taskCount > 1 ? T("You have {0} tasks.", taskCount) : T("You have 1 task."),
         color: 'blue',
         value: taskCount,
         actionable: true
@@ -36,15 +31,13 @@ module.exports = async (activity) => {
     } else {
       taskStatus = {
         ...taskStatus,
-        description: `You have no tasks today.`,
+        description: T(`You have no tasks.`),
         actionable: false
       };
     }
 
     activity.Response.Data = taskStatus;
-
   } catch (error) {
-
-    cfActivity.handleError(activity, error);
+    Activity.handleError(error);
   }
 };
