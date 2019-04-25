@@ -22,6 +22,7 @@ module.exports = async (activity) => {
       case "create":
       case "submit":
         const form = _action.form;
+        api.initialize(activity);
         var response = await api.post("/tasks/v1/lists/@default/tasks", {
           json: true,
           body: {
@@ -32,7 +33,7 @@ module.exports = async (activity) => {
         });
 
 
-        var comment = T("Task {0} created",response.body.id);
+        var comment = T(activity, "Task {0} created", response.body.id);
         data = getObjPath(activity.Request, "Data.model");
         data._action = {
           response: {
@@ -46,7 +47,7 @@ module.exports = async (activity) => {
         var fname = __dirname + path.sep + "common" + path.sep + "task-create.form";
         var schema = yaml.safeLoad(fs.readFileSync(fname, 'utf8'));
 
-        data.title = T("Create Google Task");
+        data.title = T(activity, "Create Google Task");
         data.formSchema = schema;
         // initialize form subject with query parameter (if provided)
         if (activity.Request.Query && activity.Request.Query.query) {
@@ -58,7 +59,7 @@ module.exports = async (activity) => {
         }
         data._actionList = [{
           id: "create",
-          label: T("Create Task"),
+          label: T(activity, "Create Task"),
           settings: {
             actionType: "a"
           }
@@ -68,7 +69,7 @@ module.exports = async (activity) => {
 
     activity.Response.Data = data;
   } catch (error) {
-    Activity.handleError(error);
+    $.handleError(activity, error);
   }
 
   function getObjPath(obj, path) {

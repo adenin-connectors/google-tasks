@@ -4,6 +4,8 @@ const got = require('got');
 const HttpAgent = require('agentkeepalive');
 const HttpsAgent = HttpAgent.HttpsAgent;
 
+let _activity = null;
+
 function api(path, opts) {
   if (typeof path !== 'string') {
     return Promise.reject(new TypeError(`Expected \`path\` to be a string, got ${typeof path}`));
@@ -11,7 +13,7 @@ function api(path, opts) {
 
   opts = Object.assign({
     json: true,
-    token: Activity.Context.connector.token,
+    token: _activity.Context.connector.token,
     endpoint: 'https://www.googleapis.com',
     agent: {
       http: new HttpAgent(),
@@ -21,7 +23,7 @@ function api(path, opts) {
 
   opts.headers = Object.assign({
     accept: 'application/json',
-    'user-agent': 'adenin Now Assistant Connector, https://www.adenin.com/now-assistant'
+    'user-agent': 'adenin Digital Assistant Connector, https://www.adenin.com/digital-assistant'
   }, opts.headers);
 
   if (opts.token) opts.headers.Authorization = `Bearer ${opts.token}`;
@@ -40,7 +42,7 @@ api.convertTasks = function (response) {
   const items = [];
   let tasks = [];
 
-  if (response.body.items !== null) tasks = response.body.items;
+  if (response.body.items != null) tasks = response.body.items;
 
   for (let i = 0; i < tasks.length; i++) {
     const raw = tasks[i];
@@ -69,6 +71,10 @@ const helpers = [
   'delete'
 ];
 
+api.initialize = (activity) => {
+  _activity = activity;
+};
+
 api.stream = (url, opts) => got(url, Object.assign({}, opts, {
   json: false,
   stream: true
@@ -82,13 +88,13 @@ for (const x of helpers) {
 
 /**returns all tasks due today until midnight*/
 api.getTodaysTasks = function (pagination) {
-  const dateRange = Activity.dateRange('today');
+  const dateRange = $.dateRange(_activity,'today');
   const timeMax = ISODateString(new Date(dateRange.endDate));
 
   let path = `/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`;
 
   if (pagination) {
-    path += `&maxResults=${pagination.pageSize}${pagination.nextpage === null ?
+    path += `&maxResults=${pagination.pageSize}${pagination.nextpage == null ?
       '' :
       '&pageToken=' + pagination.nextpage}`;
   }
