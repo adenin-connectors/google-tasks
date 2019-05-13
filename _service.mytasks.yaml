@@ -2,7 +2,7 @@ ServiceName: 'tasks'
 InterfaceName: items
 Description: List of tasks
 APIDoc: ''
-Interfaces: 'pagination,daterange,status'
+Interfaces: 'pagination,status'
 RequiredScopes: ''
 AdditionalParameters:
 Method: ''
