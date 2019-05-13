@@ -37,31 +37,6 @@ function api(path, opts) {
   });
 }
 
-//**maps response data to items */
-api.convertTasks = function (response) {
-  const items = [];
-  let tasks = [];
-
-  if (response.body.items != null) tasks = response.body.items;
-
-  for (let i = 0; i < tasks.length; i++) {
-    const raw = tasks[i];
-    const item = {
-      id: raw.id,
-      title: raw.title,
-      description: raw.notes,
-      link: raw.selfLink,
-      raw: raw
-    };
-
-    items.push(item);
-  }
-
-  return {
-    items: items
-  };
-};
-
 const helpers = [
   'get',
   'post',
@@ -84,36 +59,6 @@ for (const x of helpers) {
   const method = x.toUpperCase();
   api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
   api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
-}
-
-/**returns all tasks due today until midnight*/
-api.getTodaysTasks = function (pagination) {
-  const dateRange = $.dateRange(_activity,'today');
-  const timeMax = ISODateString(new Date(dateRange.endDate));
-
-  let path = `/tasks/v1/lists/@default/tasks?dueMax=${timeMax}`;
-
-  if (pagination) {
-    path += `&maxResults=${pagination.pageSize}${pagination.nextpage == null ?
-      '' :
-      '&pageToken=' + pagination.nextpage}`;
-  }
-
-  return api(path);
-};
-
-/**formats string to match google api requirements*/
-function ISODateString(d) {
-  function pad(n) {
-    return n < 10 ? '0' + n : n;
-  }
-
-  return d.getUTCFullYear() + '-' +
-    pad(d.getUTCMonth() + 1) + '-' +
-    pad(d.getUTCDate()) + 'T' +
-    pad(d.getUTCHours()) + ':' +
-    pad(d.getUTCMinutes()) + ':' +
-    pad(d.getUTCSeconds()) + 'Z';
 }
 
 module.exports = api;

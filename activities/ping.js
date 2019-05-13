@@ -5,6 +5,7 @@ module.exports = async (activity) => {
   try {
     api.initialize(activity);
     const response = await api('/tasks/v1/users/@me/lists');
+    $.isErrorResponse(activity, response);
 
     activity.Response.Data = {
       success: response && response.statusCode === 200
