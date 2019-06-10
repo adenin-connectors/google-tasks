@@ -4,12 +4,13 @@ const api = require('./common/api');
 module.exports = async function (activity) {
   try {
     api.initialize(activity);
+
     var dateRange = $.dateRange(activity);
     let timeMin = api.ISODateString(new Date(dateRange.startDate));
     let timeMax = api.ISODateString(new Date(dateRange.endDate));
 
     let allTasks = [];
-    let url = `/tasks/v1/lists/@default/tasks?showCompleted=false&maxResults=100&dueMin=${timeMin}&dueMax=${timeMax}`;
+    let url = `/tasks/v1/lists/@default/tasks?showCompleted=true&maxResults=100&dueMin=${timeMin}&dueMax=${timeMax}`;
     let response = await api(url);
     $.isErrorResponse(activity, response);
 
@@ -37,7 +38,7 @@ module.exports = async function (activity) {
     const pagination = $.pagination(activity);
     const pagiantedItems = api.paginateItems(allTasks, pagination);
     activity.Response.Data.items = api.convertTasks(pagiantedItems);
-    activity.Response.Data.title = T(activity, 'My Tasks');
+    activity.Response.Data.title = T(activity, 'All Tasks');
     activity.Response.Data.link = 'https://mail.google.com/tasks/canvas';
     activity.Response.Data.linkLabel = T(activity, 'All Tasks');
     activity.Response.Data.actionable = value > 0;

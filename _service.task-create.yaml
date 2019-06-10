@@ -1,8 +1,7 @@
-ServiceName: 'task-create'
 InterfaceName: 'create'
-Description: 'Create Google Task'
+Description: 'Create Task'
 APIDoc: ''
-Interfaces: 'search,pagination'
+Interfaces: ''
 RequiredScopes: ''
 AdditionalParameters:
 Method: ''

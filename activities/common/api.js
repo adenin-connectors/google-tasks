@@ -57,8 +57,55 @@ api.stream = (url, opts) => got(url, Object.assign({}, opts, {
 
 for (const x of helpers) {
   const method = x.toUpperCase();
-  api[x] = (url, opts) => api(url, Object.assign({}, opts, {method}));
-  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, {method}));
+  api[x] = (url, opts) => api(url, Object.assign({}, opts, { method }));
+  api.stream[x] = (url, opts) => api.stream(url, Object.assign({}, opts, { method }));
 }
 
+api.paginateItems = function (items, pagination) {
+  let pagiantedItems = [];
+  const pageSize = parseInt(pagination.pageSize);
+  const offset = (parseInt(pagination.page) - 1) * pageSize;
+
+  if (offset > items.length) return pagiantedItems;
+
+  for (let i = offset; i < offset + pageSize; i++) {
+    if (i >= items.length) {
+      break;
+    }
+    pagiantedItems.push(items[i]);
+  }
+  return pagiantedItems;
+}
+//**maps response data to items */
+api.convertTasks = function (tasks) {
+  const items = [];
+
+  for (let i = 0; i < tasks.length; i++) {
+    const raw = tasks[i];
+    const item = {
+      id: raw.id,
+      title: raw.title,
+      description: raw.notes,
+      link: raw.selfLink,
+      raw: raw
+    };
+
+    items.push(item);
+  }
+
+  return { items };
+};
+/**formats string to match google api requirements*/
+api.ISODateString = function (d) {
+  function pad(n) {
+    return n < 10 ? '0' + n : n;
+  }
+
+  return d.getUTCFullYear() + '-' +
+    pad(d.getUTCMonth() + 1) + '-' +
+    pad(d.getUTCDate()) + 'T' +
+    pad(d.getUTCHours()) + ':' +
+    pad(d.getUTCMinutes()) + ':' +
+    pad(d.getUTCSeconds()) + 'Z';
+}
 module.exports = api;
