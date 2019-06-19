@@ -45,6 +45,10 @@ module.exports = async function (activity) {
 
     if (value > 0) {
       activity.Response.Data.value = value;
+      // items are alrady sorted by date descending (higest value first) in api request
+      // request wasn't changed it's just tested to see how it is sorted
+      // sortby and sorttype can't be added request
+      activity.Response.Data.date = activity.Response.Data.items[0].date; 
       activity.Response.Data.color = 'blue';
       activity.Response.Data.description = value > 1 ? T(activity, "You have {0} tasks.", value)
         : T(activity, "You have 1 task.");

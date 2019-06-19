@@ -87,13 +87,14 @@ api.convertTasks = function (tasks) {
       title: raw.title,
       description: raw.notes,
       link: raw.selfLink,
+      date: new Date(raw.updated).toISOString(),
       raw: raw
     };
 
     items.push(item);
   }
 
-  return { items };
+  return items;
 };
 /**formats string to match google api requirements*/
 api.ISODateString = function (d) {
