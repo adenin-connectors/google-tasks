@@ -38,22 +38,24 @@ module.exports = async function (activity) {
     const pagination = $.pagination(activity);
     const pagiantedItems = api.paginateItems(allTasks, pagination);
     activity.Response.Data.items = api.convertTasks(pagiantedItems);
-    activity.Response.Data.title = T(activity, 'All Tasks');
-    activity.Response.Data.link = 'https://mail.google.com/tasks/canvas';
-    activity.Response.Data.linkLabel = T(activity, 'All Tasks');
-    activity.Response.Data.actionable = value > 0;
+    if (parseInt(pagination.page) == 1) {
+      activity.Response.Data.title = T(activity, 'All Tasks');
+      activity.Response.Data.link = 'https://mail.google.com/tasks/canvas';
+      activity.Response.Data.linkLabel = T(activity, 'All Tasks');
+      activity.Response.Data.actionable = value > 0;
 
-    if (value > 0) {
-      activity.Response.Data.value = value;
-      // items are alrady sorted by date descending (higest value first) in api request
-      // request wasn't changed it's just tested to see how it is sorted
-      // sortby and sorttype can't be added request
-      activity.Response.Data.date = activity.Response.Data.items[0].date; 
-      activity.Response.Data.color = 'blue';
-      activity.Response.Data.description = value > 1 ? T(activity, "You have {0} tasks.", value)
-        : T(activity, "You have 1 task.");
-    } else {
-      activity.Response.Data.description = T(activity, `You have no tasks.`);
+      if (value > 0) {
+        activity.Response.Data.value = value;
+        // items are alrady sorted by date descending (higest value first) in api request
+        // request wasn't changed it's just tested to see how it is sorted
+        // sortby and sorttype can't be added request
+        activity.Response.Data.date = new Date(allTasks[0].updated).toISOString();
+        activity.Response.Data.color = 'blue';
+        activity.Response.Data.description = value > 1 ? T(activity, "You have {0} tasks.", value)
+          : T(activity, "You have 1 task.");
+      } else {
+        activity.Response.Data.description = T(activity, `You have no tasks.`);
+      }
     }
   } catch (error) {
     $.handleError(activity, error);
